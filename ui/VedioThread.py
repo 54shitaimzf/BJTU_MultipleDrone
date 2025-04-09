@@ -75,6 +75,7 @@ class VideoThread(QThread):
         client = AirsimClient().client
         client.confirmConnection()
         # print("线程运行中")
+
         while self.running:
             try:
                 # print("接受视频帧")
