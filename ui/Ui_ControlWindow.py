@@ -21,9 +21,6 @@ from PySide6.QtWidgets import (QApplication, QHBoxLayout, QMainWindow, QPushButt
 
 class Ui_ControlWindow(object):
 
-    def __init__(self):
-        self.generateSettingButton = None
-
     def setupUi(self, ControlWindow):
         if not ControlWindow.objectName():
             ControlWindow.setObjectName(u"ControlWindow")
