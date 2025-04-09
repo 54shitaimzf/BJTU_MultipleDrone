@@ -1,6 +1,5 @@
-import airsim
-import time
 import numpy as np
+from airsim_client.client import AirsimClient
 
 origin_x = [0, 2, 4, 0, 2, 4, 0, 2, 4]       # 无人机初始位置
 origin_y = [0, 0, 0, -3, -2, -3, 3, 2, 3]
@@ -17,7 +16,7 @@ def get_UAV_pos(client, vehicle_name="SimpleFlight"):
     pos = np.array([[x], [y]])
     return pos
 
-client = airsim.MultirotorClient()  # connect to the AirSim simulator
+client =AirsimClient().client
 for i in range(9):
     name = "UAV"+str(i+1)
     client.enableApiControl(True, name)     # 获取控制权
