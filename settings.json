@@ -1,0 +1,49 @@
+{
+	"SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/main/docs/settings.md",
+	 "SettingVersion": 1.2,
+	 "SimMode": "Multirotor",
+	 "ViewMode": "FlyWithMe",
+	 "Vehicles": {
+		"UAC1": {
+			"VehicleType": "SimpleFlight",
+			 "X": 0,
+			 "Y": 0,
+			 "Z": 0,
+			 "Yaw": 0
+		}
+		,
+		 "UAC2": {
+			"VehicleType": "SimpleFlight",
+			 "X": 0.9270509831248424,
+			 "Y": 0.9510565162951535,
+			 "Z": 0,
+			 "Yaw": 0
+		}
+		,
+		 "UAC3": {
+			"VehicleType": "SimpleFlight",
+			 "X": -2.427050983124842,
+			 "Y": 0.5877852522924732,
+			 "Z": 0,
+			 "Yaw": 0
+		}
+		,
+		 "UAC4": {
+			"VehicleType": "SimpleFlight",
+			 "X": -2.4270509831248424,
+			 "Y": -0.587785252292473,
+			 "Z": 0,
+			 "Yaw": 0
+		}
+		,
+		 "UAC5": {
+			"VehicleType": "SimpleFlight",
+			 "X": 0.9270509831248417,
+			 "Y": -0.9510565162951536,
+			 "Z": 0,
+			 "Yaw": 0
+		}
+		
+	}
+	
+}
