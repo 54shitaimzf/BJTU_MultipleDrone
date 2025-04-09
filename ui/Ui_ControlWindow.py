@@ -9,21 +9,20 @@
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
+                            QMetaObject, QObject, QPoint, QRect,
+                            QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
+                           QFont, QFontDatabase, QGradient, QIcon,
+                           QImage, QKeySequence, QLinearGradient, QPainter,
+                           QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtOpenGLWidgets import QOpenGLWidget
 from PySide6.QtWidgets import (QApplication, QHBoxLayout, QMainWindow, QPushButton,
-    QSizePolicy, QSpinBox, QTextEdit, QVBoxLayout,
-    QWidget)
+                               QSizePolicy, QSpinBox, QVBoxLayout, QWidget)
+
+from ui.VedioThread import OpenGLVideoWidget, VideoThread
+
 
 class Ui_ControlWindow(object):
-
-    def __init__(self):
-        self.generateSettingButton = None
-
     def setupUi(self, ControlWindow):
         if not ControlWindow.objectName():
             ControlWindow.setObjectName(u"ControlWindow")
@@ -55,7 +54,6 @@ class Ui_ControlWindow(object):
 
         self.verticalLayout.addWidget(self.generateSettingButton)
 
-
         self.leftLayout.addLayout(self.verticalLayout)
 
         self.verticalLayout_2 = QVBoxLayout()
@@ -81,24 +79,32 @@ class Ui_ControlWindow(object):
 
         self.verticalLayout_2.addWidget(self.stopFlightButton)
 
-
         self.leftLayout.addLayout(self.verticalLayout_2)
-
 
         self.horizontalLayout_2.addLayout(self.leftLayout)
 
         self.displayLayout = QVBoxLayout()
         self.displayLayout.setObjectName(u"displayLayout")
-        self.textEdit = QTextEdit(self.centralwidget)
-        self.textEdit.setObjectName(u"textEdit")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.textEdit.sizePolicy().hasHeightForWidth())
-        self.textEdit.setSizePolicy(sizePolicy1)
 
-        self.displayLayout.addWidget(self.textEdit)
+        # 接收airsim视频流的opengl控件
+        print("绑定opengl控件")
+        self.openGLWidget = OpenGLVideoWidget()
+        self.displayLayout.replaceWidget(self.findChild(QOpenGLWidget), self.openGLWidget)
 
+        # 初始化视频线程
+        print("绑定视频流")
+        self.video_thread = VideoThread()
+        self.video_thread.frame_signal.connect(self.openGLWidget.update_frame)
+        # 启动线程
+        if not self.video_thread.isRunning():
+            self.video_thread.start()
+
+        # # 绑定按钮事件
+        self.startFlightButton.clicked.connect(self.startFlight)
+        # self.stopFlightButton.clicked.connect(self.stop_video_stream)
+        #
+
+        self.displayLayout.addWidget(self.openGLWidget)
 
         self.horizontalLayout_2.addLayout(self.displayLayout)
 
@@ -107,11 +113,18 @@ class Ui_ControlWindow(object):
         self.retranslateUi(ControlWindow)
 
         QMetaObject.connectSlotsByName(ControlWindow)
+
     # setupUi
 
+    def startFlight(self):
+        import MultipleDrones
+
     def retranslateUi(self, ControlWindow):
-        ControlWindow.setWindowTitle(QCoreApplication.translate("ControlWindow", u"AirSim \u591a\u65e0\u4eba\u673a\u98de\u884c\u4eff\u771f\u7cfb\u7edf", None))
-        self.generateSettingButton.setText(QCoreApplication.translate("ControlWindow", u"\u751f\u6210\u8bbe\u7f6e", None))
+        ControlWindow.setWindowTitle(QCoreApplication.translate("ControlWindow",
+                                                                u"AirSim \u591a\u65e0\u4eba\u673a\u98de\u884c\u4eff\u771f\u7cfb\u7edf",
+                                                                None))
+        self.generateSettingButton.setText(
+            QCoreApplication.translate("ControlWindow", u"\u751f\u6210\u8bbe\u7f6e", None))
         self.testControlButton.setText(QCoreApplication.translate("ControlWindow", u"\u6d4b\u8bd5\u8fde\u63a5", None))
         self.startFlightButton.setText(QCoreApplication.translate("ControlWindow", u"\u5f00\u59cb\u98de\u884c", None))
         self.stopFlightButton.setText(QCoreApplication.translate("ControlWindow", u"\u505c\u6b62\u98de\u884c", None))
