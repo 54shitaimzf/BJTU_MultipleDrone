@@ -1,24 +1,19 @@
 import json
 import math
 from PySide6 import QtCore
+from PySide6.QtCore import QDir
 from PySide6.QtWidgets import QMainWindow, QPushButton, QSpinBox
 
-class SettingWindow(QMainWindow):
+from ui.Ui_ControlWindow import Ui_ControlWindow
+
+class ControlWindow(QMainWindow, Ui_ControlWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("AirSim Settings: ")
-        self.resize(400, 300)
-        btn = QPushButton(self)
-        btn.setText("Generate!")
-        btn.setGeometry(QtCore.QRect(50, 200, 300, 50))
-        self.number = QSpinBox(self)
-        self.number.setMaximum(10)
-        self.number.setMinimum(1)
-        self.number.setGeometry(QtCore.QRect(100, 100, 200, 50))
-        btn.clicked.connect(self.btn_clicked)
+        self.setupUi(self)
+        self.generateSettingButton.clicked.connect(self.btn_clicked)
 
     def btn_clicked(self):
-        output_settings(self.number.value(), {})
+        output_settings(self.numDroneBox.value(), {})
 
 def fix_settings(config):
     #文档入口
@@ -53,7 +48,9 @@ def output_settings(num, config):
     print(config)
     set_up_vehicles(num, config)
     config = json.dumps(config)
-    file = open("settings.json", "w")
+    file_path = QDir.homePath() + "/Documents/AirSim/settings.json"
+    file = open(file_path, "w")
+    file.truncate()
     tabs = 0
     for char in config:
         if char == "}":
