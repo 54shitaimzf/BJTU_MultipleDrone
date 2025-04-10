@@ -52,7 +52,7 @@ def fix_settings(config):
     config ["SimMode"] = "Multirotor"
     config ["ViewMode"] = "FlyWithMe"
 
-def set_up_vehicles(num, config):
+def set_up_vehicles_circ(num, config):
     vehicles = {}
     for i in range(num):
         index = "UAV" + str(i + 1)
@@ -72,11 +72,53 @@ def set_up_vehicles(num, config):
             }
     config ["Vehicles"] = vehicles
 
+def set_up_vehicles_rect(num, config):
+    if (num-1) % 4 != 0:
+        QMessageBox.critical(None, "错误", "无人机数目非法，应为4n+1")
+        return
+    vehicles = {}
+    for i in range(num):
+        index = "UAV" + str(i + 1)
+        if i + 1 == 1:
+            vehicles[index] = {
+                "VehicleType": "SimpleFlight",
+                "X": 0, "Y": 0, "Z": 0,
+                "Yaw": 0
+            }
+        else:
+            temp_length = 2
+            vehicles[index] = {
+                "VehicleType": "SimpleFlight",
+                "X": i/4 * temp_length if i % 4 == 1 or i % 4 == 3 else -i/4 * temp_length,
+                "Y": i/4 * temp_length if i % 4 == 1 or i % 4 == 2 else -i/4 * temp_length,
+                "Z": 0,
+                "Yaw": 0
+            }
+    config["Vehicles"] = vehicles
+
+def set_up_vehicles_line(num, config):
+    vehicles = {}
+    for i in range(num):
+        index = "UAV" + str(i + 1)
+        if i + 1 == 1:
+            vehicles[index] = {
+                "VehicleType": "SimpleFlight",
+                "X": 0, "Y": 0, "Z": 0,
+                "Yaw": 0
+            }
+        else:
+            vehicles[index] = {
+                "VehicleType": "SimpleFlight",
+                "X": 0, "Y": 3 * i/2 if i % 2 == 0 else 3 * -i/2, "Z": 0,
+                "Yaw": 0
+            }
+    config["Vehicles"] = vehicles
+
 def output_settings(num, config):
     config = {}
     fix_settings(config)
     print(config)
-    set_up_vehicles(num, config)
+    set_up_vehicles_circ(num, config)
     config = json.dumps(config)
     file_path = QDir.homePath() + "/Documents/AirSim/settings.json"
     file = open(file_path, "w")
