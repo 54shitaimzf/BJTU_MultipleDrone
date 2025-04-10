@@ -92,7 +92,7 @@ class MultiDrones(QObject):
             for i in range(self.nums):  # 每个无人机的速度指令执行
                 name_i = "UAV" + str(i + 1)
                 self.client.moveByVelocityZAsync(v_cmd[0, i], v_cmd[1, i], -3, 0.1, vehicle_name=name_i)
-            if self.get_UAV_pos("UAV1") == pos_mig or self.stopped:
+            if abs(self.get_UAV_pos("UAV1")[0]-pos_mig[0]) < 1 and abs(self.get_UAV_pos("UAV1")[1]-pos_mig[1]) < 1 or self.stopped:
                 break
 
 
