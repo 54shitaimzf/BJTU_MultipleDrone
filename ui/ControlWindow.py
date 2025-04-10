@@ -17,9 +17,10 @@ class ControlWindow(QMainWindow, Ui_ControlWindow):
         self.testControlButton.clicked.connect(self.test_connection)
 
     def gen_btn_clicked(self):
-        output_settings(self.numDroneBox.value(),{})
+        output_settings(self.typeComboBox.currentIndex(), self.numDroneBox.value(), {})
 
     def ctrl_btn_clicked(self):
+        self.controller.set_target(self.targetXBox.value(), self.targetYBox.value())
         self.controller.moveToThread(self.thread)
         self.thread.started.connect(self.controller.run)
         self.thread.start()
@@ -114,11 +115,17 @@ def set_up_vehicles_line(num, config):
             }
     config["Vehicles"] = vehicles
 
-def output_settings(num, config):
+def output_settings(type, num, config):
     config = {}
     fix_settings(config)
     print(config)
-    set_up_vehicles_circ(num, config)
+    match type:
+        case 0:
+            set_up_vehicles_circ(num, config)
+        case 1:
+            set_up_vehicles_rect(num, config)
+        case 2:
+            set_up_vehicles_line(num, config)
     config = json.dumps(config)
     file_path = QDir.homePath() + "/Documents/AirSim/settings.json"
     file = open(file_path, "w")

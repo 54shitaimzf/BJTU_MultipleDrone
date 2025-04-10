@@ -13,6 +13,10 @@ class MultiDrones(QObject):
     nums = 0
     stopped = False
     finished = Signal()
+    pos_mig = np.array([[25], [0]])  # 目标位置
+    def set_target(self, x, y):
+        self.pos_mig = np.array([[x], [y]])
+
     def stopping(self):
         self.stopped = True
 
@@ -65,14 +69,13 @@ class MultiDrones(QObject):
         k_sep = 7  # 控制算法系数
         k_coh = 1
         k_mig = 1
-        pos_mig = np.array([[25], [0]])  # 目标位置
         v_cmd = np.zeros([2, 9])
 
         while True:
             for i in range(self.nums):  # 计算每个无人机的速度指令
                 name_i = "UAV" + str(i + 1)
                 pos_i = self.get_UAV_pos(vehicle_name=name_i)
-                r_mig = pos_mig - pos_i
+                r_mig = self.pos_mig - pos_i
                 v_mig = k_mig * r_mig / np.linalg.norm(r_mig)
                 v_sep = np.zeros([2, 1])
                 v_coh = np.zeros([2, 1])
@@ -92,7 +95,7 @@ class MultiDrones(QObject):
             for i in range(self.nums):  # 每个无人机的速度指令执行
                 name_i = "UAV" + str(i + 1)
                 self.client.moveByVelocityZAsync(v_cmd[0, i], v_cmd[1, i], -3, 0.1, vehicle_name=name_i)
-            if abs(self.get_UAV_pos("UAV1")[0]-pos_mig[0]) < 1 and abs(self.get_UAV_pos("UAV1")[1]-pos_mig[1]) < 1 or self.stopped:
+            if abs(self.get_UAV_pos("UAV1")[0]-self.pos_mig[0]) < 1 and abs(self.get_UAV_pos("UAV1")[1]-self.pos_mig[1]) < 1 or self.stopped:
                 break
 
 
