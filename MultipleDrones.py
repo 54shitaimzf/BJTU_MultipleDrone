@@ -1,3 +1,5 @@
+from time import sleep
+
 import airsim
 import time
 import numpy as np
@@ -18,6 +20,7 @@ class MultiDrones(QObject):
         self.nums = len(vehicles)
         self.origin_x = [0] * self.nums
         self.origin_y = [0] * self.nums
+        self.flying = True
         for i in range(len(vehicles)) :
             self.origin_x[i] = vehicles['UAV' + str(i+1)]['X']
             self.origin_y[i] = vehicles['UAV' + str(i+1)]['Y']
@@ -60,7 +63,7 @@ class MultiDrones(QObject):
         pos_mig = np.array([[25], [0]])  # 目标位置
         v_cmd = np.zeros([2, 9])
 
-        for t in range(500):
+        for i in range(500):
             for i in range(self.nums):  # 计算每个无人机的速度指令
                 name_i = "UAV" + str(i + 1)
                 pos_i = self.get_UAV_pos(vehicle_name=name_i)
@@ -87,17 +90,13 @@ class MultiDrones(QObject):
                 self.client.moveByVelocityZAsync(v_cmd[0, i], v_cmd[1, i], -3, 0.1, vehicle_name=name_i)
 
         # 循环结束
-        self.client.simPause(False)
         for i in range(self.nums):
             name = "UAV" + str(i + 1)
-            if i != 8:  # 降落
-                self.client.landAsync(vehicle_name=name)
-            else:
-                self.client.landAsync(vehicle_name=name).join()
-        for i in range(self.nums):
-            name = "UAV" + str(i + 1)
-            self.client.armDisarm(False, vehicle_name=name)  # 上锁
+            self.client.landAsync(vehicle_name=name)
             self.client.enableApiControl(False, vehicle_name=name)  # 释放控制权
+        for i in range(self.nums):
+            name = "UAV" + str(i + 1)
+
 
 
 
