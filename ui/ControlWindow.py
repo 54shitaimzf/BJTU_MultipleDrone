@@ -74,9 +74,6 @@ def set_up_vehicles_circ(num, config):
     config ["Vehicles"] = vehicles
 
 def set_up_vehicles_rect(num, config):
-    if (num-1) % 4 != 0:
-        QMessageBox.critical(None, "错误", "无人机数目非法，应为4n+1")
-        return
     vehicles = {}
     for i in range(num):
         index = "UAV" + str(i + 1)
@@ -87,11 +84,11 @@ def set_up_vehicles_rect(num, config):
                 "Yaw": 0
             }
         else:
-            temp_length = 2
+            temp_length = 5
             vehicles[index] = {
                 "VehicleType": "SimpleFlight",
-                "X": i/4 * temp_length if i % 4 == 1 or i % 4 == 3 else -i/4 * temp_length,
-                "Y": i/4 * temp_length if i % 4 == 1 or i % 4 == 2 else -i/4 * temp_length,
+                "X": math.floor(i/4) * temp_length if i % 4 == 1 or i % 4 == 3 else -math.floor(i/4) * temp_length,
+                "Y": math.floor(i/4) * temp_length if i % 4 == 1 or i % 4 == 2 else -math.floor(i/4) * temp_length,
                 "Z": 0,
                 "Yaw": 0
             }
@@ -110,7 +107,7 @@ def set_up_vehicles_line(num, config):
         else:
             vehicles[index] = {
                 "VehicleType": "SimpleFlight",
-                "X": 0, "Y": 3 * i/2 if i % 2 == 0 else 3 * -i/2, "Z": 0,
+                "X": 0, "Y": 3 * math.floor((i+1)/2) if i % 2 == 0 else 3 * -math.floor((i+1)/2), "Z": 0,
                 "Yaw": 0
             }
     config["Vehicles"] = vehicles
@@ -123,6 +120,9 @@ def output_settings(type, num, config):
         case 0:
             set_up_vehicles_circ(num, config)
         case 1:
+            if (num-1) % 4 != 0:
+                QMessageBox.critical(None, "错误", "无人机数目非法，应为4n+1")
+                return
             set_up_vehicles_rect(num, config)
         case 2:
             set_up_vehicles_line(num, config)
