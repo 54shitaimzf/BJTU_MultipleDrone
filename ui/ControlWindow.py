@@ -1,19 +1,33 @@
 import json
 import math
-from PySide6 import QtCore
-from PySide6.QtCore import QDir
+from PySide6.QtCore import QDir, QThread
 from PySide6.QtWidgets import QMainWindow, QPushButton, QSpinBox
-
 from ui.Ui_ControlWindow import Ui_ControlWindow
+from MultipleDrones import MultiDrones as Md
 
 class ControlWindow(QMainWindow, Ui_ControlWindow):
+    controller = None
+    thread = None
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.generateSettingButton.clicked.connect(self.btn_clicked)
+        self.generateSettingButton.clicked.connect(self.gen_btn_clicked)
+        self.startFlightButton.clicked.connect(self.ctrl_btn_clicked)
+        self.stopFlightButton.clicked.connect(self.stop_btn_clicked)
 
-    def btn_clicked(self):
-        output_settings(self.numDroneBox.value(), {})
+    def gen_btn_clicked(self):
+        output_settings(self.numDroneBox.value(),{})
+
+    def ctrl_btn_clicked(self):
+        self.thread = QThread()
+        self.controller = Md()
+        self.controller.moveToThread(self.thread)
+        self.thread.started.connect(self.controller.run)
+        self.thread.start()
+
+    def stop_btn_clicked(self):
+        temp = 0
+
 
 def fix_settings(config):
     #文档入口
@@ -25,7 +39,7 @@ def fix_settings(config):
 def set_up_vehicles(num, config):
     vehicles = {}
     for i in range(num):
-        index = "UAC" + str(i + 1)
+        index = "UAV" + str(i + 1)
         if i + 1 == 1 :
             vehicles[index] = {
                 "VehicleType": "SimpleFlight",
@@ -33,11 +47,11 @@ def set_up_vehicles(num, config):
                 "Yaw": 0
             }
         else :
-            angle = 360 / num * i
+            angle = 360 / (num - 1) * i
             print(angle)
             vehicles[index] = {
                 "VehicleType": "SimpleFlight",
-                "X": 3 * math.cos(math.radians(angle)), "Y": math.sin(math.radians(angle)), "Z": 0,
+                "X": 3 * math.cos(math.radians(angle)), "Y":3 * math.sin(math.radians(angle)), "Z": 0,
                 "Yaw": 0
             }
     config ["Vehicles"] = vehicles
