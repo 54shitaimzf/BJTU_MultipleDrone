@@ -103,3 +103,4 @@ def output_settings(num, config):
             for i in range(tabs):
                 file.write("\t")
     file.close()
+    QMessageBox.information(None,"信息", "成功生成配置！")
