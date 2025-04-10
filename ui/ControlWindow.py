@@ -1,32 +1,48 @@
 import json
 import math
-from PySide6.QtCore import QDir, QThread
-from PySide6.QtWidgets import QMainWindow
+from PySide6.QtCore import QDir, QThread, Signal, Slot
+from PySide6.QtWidgets import QMainWindow, QMessageBox
 from ui.Ui_ControlWindow import Ui_ControlWindow
 from utils.MultipleDrones import MultiDrones as Md
 
 class ControlWindow(QMainWindow, Ui_ControlWindow):
-    controller = None
-    thread = None
+    controller = Md()
+    thread = QThread()
     def __init__(self):
         super().__init__()
         self.setupUi(self)
         self.generateSettingButton.clicked.connect(self.gen_btn_clicked)
         self.startFlightButton.clicked.connect(self.ctrl_btn_clicked)
         self.stopFlightButton.clicked.connect(self.stop_btn_clicked)
+        self.testControlButton.clicked.connect(self.test_connection)
 
     def gen_btn_clicked(self):
         output_settings(self.numDroneBox.value(),{})
 
     def ctrl_btn_clicked(self):
-        self.thread = QThread()
-        self.controller = Md()
         self.controller.moveToThread(self.thread)
         self.thread.started.connect(self.controller.run)
         self.thread.start()
+        self.controller.finished.connect(self.ctrl_thread_stopped)
 
     def stop_btn_clicked(self):
-        temp = 0
+        self.controller.stopping()
+        self.controller.finished.disconnect(self.ctrl_thread_stopped)
+
+    @Slot()
+    def ctrl_thread_stopped(self):
+        self.thread.quit()
+        self.thread.deleteLater()
+
+    def closeEvent(self, event):
+        self.stop_btn_clicked()
+        event.accept()
+
+    def test_connection(self):
+        if self.controller is not None:
+            self.controller.client.confirmConnection()
+        else:
+            QMessageBox.information(self, "Connection Failed", "Client unable to connect.")
 
 
 def fix_settings(config):

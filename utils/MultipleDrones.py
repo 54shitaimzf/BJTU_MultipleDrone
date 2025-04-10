@@ -11,6 +11,11 @@ class MultiDrones(QObject):
     origin_y = None
     client = airsim.MultirotorClient()
     nums = 0
+    stopped = False
+    finished = Signal()
+    def stopping(self):
+        self.stopped = True
+
     def __init__(self, parent=None):
         super(MultiDrones, self).__init__(parent)
         file_path = QDir.homePath() + "/Documents/AirSim/settings.json"
@@ -63,7 +68,7 @@ class MultiDrones(QObject):
         pos_mig = np.array([[25], [0]])  # 目标位置
         v_cmd = np.zeros([2, 9])
 
-        for i in range(500):
+        while True:
             for i in range(self.nums):  # 计算每个无人机的速度指令
                 name_i = "UAV" + str(i + 1)
                 pos_i = self.get_UAV_pos(vehicle_name=name_i)
@@ -84,29 +89,17 @@ class MultiDrones(QObject):
                 v_sep = v_sep / N_i
                 v_coh = v_coh / N_i
                 v_cmd[:, i:i + 1] = v_sep + v_coh + v_mig
-
             for i in range(self.nums):  # 每个无人机的速度指令执行
                 name_i = "UAV" + str(i + 1)
                 self.client.moveByVelocityZAsync(v_cmd[0, i], v_cmd[1, i], -3, 0.1, vehicle_name=name_i)
+            if self.get_UAV_pos("UAV1") == pos_mig or self.stopped:
+                break
+
 
         # 循环结束
         for i in range(self.nums):
             name = "UAV" + str(i + 1)
             self.client.landAsync(vehicle_name=name)
-            self.client.enableApiControl(False, vehicle_name=name)  # 释放控制权
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            self.client.enableApiControl(False, vehicle_name=name)
+        # 释放控制权
+        self.finished.emit()
