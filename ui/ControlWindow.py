@@ -1,9 +1,9 @@
 import json
 import math
 from PySide6.QtCore import QDir, QThread
-from PySide6.QtWidgets import QMainWindow, QPushButton, QSpinBox
+from PySide6.QtWidgets import QMainWindow
 from ui.Ui_ControlWindow import Ui_ControlWindow
-from MultipleDrones import MultiDrones as Md
+from utils.MultipleDrones import MultiDrones as Md
 
 class ControlWindow(QMainWindow, Ui_ControlWindow):
     controller = None
