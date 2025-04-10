@@ -94,8 +94,7 @@ class MultiDrones(QObject):
             name = "UAV" + str(i + 1)
             self.client.landAsync(vehicle_name=name)
             self.client.enableApiControl(False, vehicle_name=name)  # 释放控制权
-        for i in range(self.nums):
-            name = "UAV" + str(i + 1)
+
 
 
 
