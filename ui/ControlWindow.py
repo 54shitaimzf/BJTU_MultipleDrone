@@ -87,8 +87,8 @@ def set_up_vehicles_rect(num, config):
             temp_length = 5
             vehicles[index] = {
                 "VehicleType": "SimpleFlight",
-                "X": math.floor(i/4) * temp_length if i % 4 == 1 or i % 4 == 3 else -math.floor(i/4) * temp_length,
-                "Y": math.floor(i/4) * temp_length if i % 4 == 1 or i % 4 == 2 else -math.floor(i/4) * temp_length,
+                "X": math.floor((i-1)/4+1) * temp_length if i % 4 == 1 or i % 4 == 3 else -math.floor((i-1)/4+1) * temp_length,
+                "Y": math.floor((i-1)/4+1) * temp_length if i % 4 == 1 or i % 4 == 2 else -math.floor((i-1)/4+1) * temp_length,
                 "Z": 0,
                 "Yaw": 0
             }
