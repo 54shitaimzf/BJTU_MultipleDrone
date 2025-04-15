@@ -169,7 +169,7 @@ class Ui_ControlWindow(object):
         self.generateSettingButton.setText(QCoreApplication.translate("ControlWindow", u"\u751f\u6210\u8bbe\u7f6e", None))
         self.label_3.setText(QCoreApplication.translate("ControlWindow", u"\u76ee\u6807X\u5750\u6807", None))
         self.label_2.setText(QCoreApplication.translate("ControlWindow", u"\u76ee\u6807Y\u5750\u6807", None))
-        self.testControlButton.setText(QCoreApplication.translate("ControlWindow", u"\u6d4b\u8bd5\u8fde\u63a5", None))
+        self.testControlButton.setText(QCoreApplication.translate("ControlWindow", u"\u98de\u884c\u76d1\u89c6", None))
         self.startFlightButton.setText(QCoreApplication.translate("ControlWindow", u"\u5f00\u59cb\u98de\u884c", None))
         self.stopFlightButton.setText(QCoreApplication.translate("ControlWindow", u"\u505c\u6b62\u98de\u884c", None))
     # retranslateUi

@@ -160,7 +160,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>测试连接</string>
+           <string>飞行监视</string>
           </property>
          </widget>
         </item>

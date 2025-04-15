@@ -40,10 +40,7 @@ class ControlWindow(QMainWindow, Ui_ControlWindow):
         event.accept()
 
     def test_connection(self):
-        if self.controller is not None:
-            self.controller.client.confirmConnection()
-        else:
-            QMessageBox.information(self, "Connection Failed", "Client unable to connect.")
+        QMessageBox.information(self, "Connection Failed", "TODO")
 
 
 def fix_settings(config):
