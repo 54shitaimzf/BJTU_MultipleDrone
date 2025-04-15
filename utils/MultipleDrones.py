@@ -6,10 +6,14 @@ import numpy as np
 from PySide6.QtCore import QObject, Slot, Signal, QDir
 import json
 
+from airsim_client.client import AirsimClient
+
+
 class MultiDrones(QObject):
     origin_x = None       # 无人机初始位置
     origin_y = None
     client = airsim.MultirotorClient()
+    # client = AirsimClient().client
     nums = 0
     stopped = False
     finished = Signal()

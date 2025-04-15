@@ -1,10 +1,12 @@
 import json
 import math
+
 from PySide6.QtCore import QDir, QThread, Signal, Slot
 from PySide6.QtWidgets import QMainWindow, QMessageBox
+
 from ui.Ui_ControlWindow import Ui_ControlWindow
 from utils.MultipleDrones import MultiDrones as Md
-
+from utils.video_thread import video_thread
 class ControlWindow(QMainWindow, Ui_ControlWindow):
     controller = Md()
     thread = QThread()
@@ -15,6 +17,7 @@ class ControlWindow(QMainWindow, Ui_ControlWindow):
         self.startFlightButton.clicked.connect(self.ctrl_btn_clicked)
         self.stopFlightButton.clicked.connect(self.stop_btn_clicked)
         self.testControlButton.clicked.connect(self.test_connection)
+        self.video_thread = video_thread()
 
     def gen_btn_clicked(self):
         output_settings(self.typeComboBox.currentIndex(), self.numDroneBox.value(), {})
@@ -40,7 +43,8 @@ class ControlWindow(QMainWindow, Ui_ControlWindow):
         event.accept()
 
     def test_connection(self):
-        QMessageBox.information(self, "Connection Failed", "TODO")
+        if not self.video_thread.is_alive():
+            self.video_thread.start()
 
 
 def fix_settings(config):
